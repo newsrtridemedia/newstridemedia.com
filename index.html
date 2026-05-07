@@ -230,7 +230,7 @@ footer{background:#0a0a0a;border-top:1px solid rgba(255,255,255,0.07);padding:1.
   </nav>
 </footer>
 <script>
-function submitForm(){
+async function submitForm(){
   const required={firstName:'First name',lastName:'Last name',email:'Email',service:'Service',date:'Date',location:'Location'};
   for(const[id] of Object.entries(required)){
     const el=document.getElementById(id);
@@ -238,8 +238,31 @@ function submitForm(){
   }
   const emailEl=document.getElementById('email');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)){emailEl.focus();emailEl.style.borderColor='#ff3b30';setTimeout(()=>emailEl.style.borderColor='',2000);return;}
-  document.getElementById('formBody').style.display='none';
-  document.getElementById('successState').style.display='block';
+
+  const data={
+    firstName:document.getElementById('firstName').value,
+    lastName:document.getElementById('lastName').value,
+    email:document.getElementById('email').value,
+    phone:document.getElementById('phone').value,
+    service:document.getElementById('service').value,
+    date:document.getElementById('date').value,
+    location:document.getElementById('location').value,
+    budget:document.getElementById('budget').value,
+    message:document.getElementById('message').value
+  };
+
+  const res=await fetch('https://formspree.io/f/mrejlyqb',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  });
+
+  if(res.ok){
+    document.getElementById('formBody').style.display='none';
+    document.getElementById('successState').style.display='block';
+  } else {
+    alert('Something went wrong. Please email us directly at newstridemedia@gmail.com');
+  }
 }
 function resetForm(){
   ['firstName','lastName','email','phone','service','date','location','budget','message'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
